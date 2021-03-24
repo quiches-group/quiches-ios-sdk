@@ -9,11 +9,7 @@ import Foundation
 
 protocol Request: Weakable {
     var method: HTTPMethod { get }
-    var url: URL? { get set }
-    var request: URLRequest? { get set }
-    
-    func generateUrl()
-    func generateRequest()
+    func generateRequest(url: URL) -> URLRequest?
 }
 
 extension Request {
@@ -27,17 +23,29 @@ extension Request {
     
     func executeRequest(
         with request: URLRequest,
-        successHandler: @escaping (URLResponse, Data?) -> Void,
-        errorHandler: ((Error) -> Void)? = nil
+        completionHandler: @escaping (Result<(URLResponse, Data?), Error>) -> Void
     ) {
         URLSession.shared.dataTask(with: request) { (data, urlResponse, error) in
+            guard let response = urlResponse as? HTTPURLResponse else {
+                completionHandler(.failure(NSError(domain: "UNKNOW_ERROR", code: 500, userInfo: nil)))
+
+                return
+            }
+            
             if let error = error {
-                errorHandler?(error)
-            } else if let urlResponse = urlResponse {
-                successHandler(urlResponse, data)
+                completionHandler(.failure(error))
+                
+                return
             } else {
-                //  handle new error
+                completionHandler(.success((response, data)))
+                
+                return
             }
         }.resume()
+    }
+    
+    func generateUrl(with urlString: String) -> URL? {
+        let url = URL(string: urlString)
+        return url
     }
 }

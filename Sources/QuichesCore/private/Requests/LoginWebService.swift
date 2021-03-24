@@ -12,61 +12,58 @@ struct LoginWebServiceParameters: Encodable {
     let password: String
 }
 
-struct LoginWebServiceResponse: Decodable {
+public struct LoginWebServiceResponse: Decodable {
     let token: String
     let refreshToken: String
 }
 
-final class LoginWebService: Request {
+public final class LoginWebService: Request {
     private let hostname = Config.Hostname.sso.rawValue
     
     private let publicKey: String
     internal let method: HTTPMethod = .POST
-    internal var url: URL?
-    internal var request: URLRequest?
     
     private let decoder: JSONDecoder = JSONDecoder()
     
     init(publicKey: String) {
         self.publicKey = publicKey
-        generateUrl()
-        generateRequest()
     }
     
-    internal func generateUrl() {
-        url = URL(string: "\(hostname)/users/login")
-    }
-    
-    internal func generateRequest() {
-        guard let url = url else { return }
-        
+    internal func generateRequest(url: URL) -> URLRequest? {
         var request = URLRequest(url: url)
 
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.httpMethod = method.rawValue
+        
+        return request
     }
     
     func send(
         parameters: LoginWebServiceParameters,
-        onSuccess successHandler: @escaping (LoginWebServiceResponse) -> Void,
-        onError errorHandler: ((Error) -> Void)? = nil
+        completion completionHandler: @escaping (Result<LoginWebServiceResponse, Error>) -> Void
     ) {
-        guard var request = request,
+        guard let url = generateUrl(with: "\(hostname)/application-users/login?publicKey=\(publicKey)"),
+              var request = generateRequest(url: url),
               let body = encodeBody(with: parameters) else { return }
         
         request.httpBody = body
-        
-        executeRequest(with: request, successHandler: weakify { (strongSelf, urlResponse, data) in
-            guard let data = data else { return }
-            
-            do {
-                let response = try strongSelf.decoder.decode(LoginWebServiceResponse.self, from: data)
-                successHandler(response)
-            } catch (let error) {
-                errorHandler?(error)
+
+        executeRequest(with: request, completionHandler: { [decoder] result in
+            switch result {
+            case .success((_, let data)):
+                guard let data = data else { return }
+                
+                do {
+                    let response = try decoder.decode(LoginWebServiceResponse.self, from: data)
+                    completionHandler(.success(response))
+                } catch (let error) {
+                    completionHandler(.failure(error))
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
-        }, errorHandler: errorHandler)
+        })
     }
 }
 
