@@ -1,6 +1,6 @@
 import XCTest
 
-import quiches_ios_sdkTests
+import QuichesCore
 
 var tests = [XCTestCaseEntry]()
 tests += quiches_ios_sdkTests.allTests()
