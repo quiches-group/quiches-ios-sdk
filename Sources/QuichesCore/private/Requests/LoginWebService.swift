@@ -7,17 +7,17 @@
 
 import Foundation
 
-internal struct LoginWebServiceParameters: Encodable {
+struct LoginWebServiceParameters: Encodable {
     let mail: String
     let password: String
 }
 
-internal struct LoginWebServiceResponse: Decodable {
+struct LoginWebServiceResponse: Decodable {
     let token: String
     let refreshToken: String
 }
 
-internal final class LoginWebService: Weakable {
+final class LoginWebService: Weakable {
     private let hostname = Config.Hostname.sso.rawValue
     private let method: HTTPMethod = .POST
     

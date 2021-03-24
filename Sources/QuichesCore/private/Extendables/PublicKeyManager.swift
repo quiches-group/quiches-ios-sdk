@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal protocol PublickKeyManager {}
+protocol PublickKeyManager {}
 
 extension PublickKeyManager {
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal enum Config {
+enum Config {
     enum Hostname: String {
         case sso = "https://sso.quiches.ovh"
         case notiches = "https://notiches.quiches.ovh"

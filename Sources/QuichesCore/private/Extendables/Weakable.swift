@@ -82,5 +82,3 @@ extension Weakable {
         }
     }
 }
-
-extension NSObject: Weakable { }

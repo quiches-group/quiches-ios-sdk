@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Authentication.swift
 //  
 //
 //  Created by Maxence Mottard on 24/03/2021.
@@ -13,7 +13,7 @@ public final class Authentication: NSObject {
     
     private let publicKey: String
     
-    public init(publicKey: String) {
+    init(publicKey: String) {
         self.publicKey = publicKey
     }
     
