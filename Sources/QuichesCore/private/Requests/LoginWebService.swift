@@ -17,27 +17,27 @@ struct LoginWebServiceResponse: Decodable {
     let refreshToken: String
 }
 
-final class LoginWebService: Weakable {
+final class LoginWebService: Request {
     private let hostname = Config.Hostname.sso.rawValue
-    private let method: HTTPMethod = .POST
     
     private let publicKey: String
-    private var url: URL?
-    private var request: URLRequest?
+    internal let method: HTTPMethod = .POST
+    internal var url: URL?
+    internal var request: URLRequest?
     
-    private let encoder: JSONEncoder = JSONEncoder()
     private let decoder: JSONDecoder = JSONDecoder()
     
     init(publicKey: String) {
         self.publicKey = publicKey
         generateUrl()
+        generateRequest()
     }
     
-    private func generateUrl() {
+    internal func generateUrl() {
         url = URL(string: "\(hostname)/users/login")
     }
     
-    private func generateRequest() {
+    internal func generateRequest() {
         guard let url = url else { return }
         
         var request = URLRequest(url: url)
@@ -47,26 +47,26 @@ final class LoginWebService: Weakable {
         request.httpMethod = method.rawValue
     }
     
-    func send(parameters: LoginWebServiceParameters, onSuccess: @escaping (LoginWebServiceResponse) -> Void) {
-        guard var request = request else { return }
+    func send(
+        parameters: LoginWebServiceParameters,
+        onSuccess successHandler: @escaping (LoginWebServiceResponse) -> Void,
+        onError errorHandler: ((Error) -> Void)? = nil
+    ) {
+        guard var request = request,
+              let body = encodeBody(with: parameters) else { return }
         
-        do {
-            request.httpBody = try encoder.encode(parameters)
+        request.httpBody = body
+        
+        executeRequest(with: request, successHandler: weakify { (strongSelf, urlResponse, data) in
+            guard let data = data else { return }
             
-            URLSession.shared.dataTask(with: request, completionHandler: weakify { strongSelf, data, urlResponse, error in
-                guard let data = data else { return }
-                
-                do {
-                    let response = try strongSelf.decoder.decode(LoginWebServiceResponse.self, from: data)
-                    
-                    onSuccess(response)
-                } catch (let error) {
-                    print(error)
-                }
-            })
-        } catch (let error) {
-            print(error)
-        }
+            do {
+                let response = try strongSelf.decoder.decode(LoginWebServiceResponse.self, from: data)
+                successHandler(response)
+            } catch (let error) {
+                errorHandler?(error)
+            }
+        }, errorHandler: errorHandler)
     }
 }
 
