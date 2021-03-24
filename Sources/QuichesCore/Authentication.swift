@@ -23,6 +23,8 @@ public final class Authentication: NSObject {
 
         request.send(parameters: parameters) { (credentials) in
             print(credentials)
+        } onError: { (error) in
+            print(error)
         }
     }
     
