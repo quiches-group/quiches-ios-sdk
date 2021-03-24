@@ -13,11 +13,11 @@ public final class Authentication: NSObject {
     
     private let publicKey: String
     
-    init(publicKey: String) {
+    public init(publicKey: String) {
         self.publicKey = publicKey
     }
     
-    func signInWithMailAndPassword(mail: String, password: String) {
+    public func signInWithMailAndPassword(mail: String, password: String) {
         let request = LoginWebService(publicKey: publicKey)
         let parameters = LoginWebServiceParameters(mail: mail, password: password)
 
