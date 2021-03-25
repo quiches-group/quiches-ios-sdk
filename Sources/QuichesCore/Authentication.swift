@@ -7,26 +7,35 @@
 
 import Foundation
 
-public final class Authentication: NSObject {
-    
-    private let hostname: String = Config.Hostname.sso.rawValue
-    
-    private let publicKey: String
-    
-    init(publicKey: String) {
-        self.publicKey = publicKey
-    }
-    
+public final class Authentication: RoutingProvider {    
     public func signInWithMailAndPassword(
         mail: String, password: String,
-        completion completionHandler: @escaping (Result<LoginWebServiceResponse, Error>) -> Void
+        completion: @escaping (Result<LoginWebServiceResponse, Error>) -> Void
     ) {
-        let request = LoginWebService(publicKey: publicKey)
         let parameters = LoginWebServiceParameters(mail: mail, password: password)
+        let service = LoginWebService(publicKey: publicKey, parameters: parameters)
         
-        request.send(parameters: parameters) { result in
-            print(result)
-            completionHandler(result)
+        execute(with: service) { result in
+            switch result {
+            case .success(let credentials):
+                AuthenticationProvider.shared.setJwtToken(with: credentials.token)
+                completion(.success(credentials))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func getCurrentUser(completion: @escaping (Result<User, Error>) -> Void) {
+        let service = GetCurrentUserWebService()
+        
+        execute(with: service) { result in
+            switch result {
+            case .success(let user):
+                completion(.success(user))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     

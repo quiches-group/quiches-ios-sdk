@@ -15,6 +15,8 @@ public final class QuichesApp {
     public init(publicKey: String) {
         self.publicKey = publicKey
         
-        self.authentication = Authentication(publicKey: publicKey)
+        self.authentication = Authentication()
+        
+        AuthenticationProvider.shared.publicKey = publicKey
     }
 }
