@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct EmptyCodable: Decodable, Encodable {}
+struct EmptyCodable: Encodable {}
 
 protocol Routing {
     associatedtype ParameterTypes: Encodable
-    associatedtype DecodeType: Decodable
+    associatedtype DecodeType
     
     /// Base url for the current route. Can be specifed for all routes in the extension, and/or seperatly for each route
     var baseURL: Config.Hostname { get }

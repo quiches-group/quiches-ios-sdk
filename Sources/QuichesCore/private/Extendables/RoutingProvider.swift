@@ -56,7 +56,7 @@ extension RoutingProvider {
     func execute<T: Routing>(
         with routing: T,
         completion: @escaping (Result<T.DecodeType, Error>) -> Void
-    ) {
+    ) where T.DecodeType: Decodable {
 
         send(with: routing) { result in
             switch result {
