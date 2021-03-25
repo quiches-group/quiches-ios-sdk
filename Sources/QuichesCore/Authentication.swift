@@ -10,16 +10,17 @@ import Foundation
 public final class Authentication: RoutingProvider {    
     public func signInWithMailAndPassword(
         mail: String, password: String,
-        completion: @escaping (Result<LoginWebServiceResponse, Error>) -> Void
+        completion: @escaping (Result<User, Error>) -> Void
     ) {
         let parameters = LoginWebServiceParameters(mail: mail, password: password)
         let service = LoginWebService(parameters: parameters)
         
-        execute(with: service) { result in
+        execute(with: service) { [getCurrentUser] result in
             switch result {
             case .success(let credentials):
                 AuthenticationProvider.shared.setJwtToken(with: credentials.token)
-                completion(.success(credentials))
+                
+                getCurrentUser(completion)
             case .failure(let error):
                 completion(.failure(error))
             }
