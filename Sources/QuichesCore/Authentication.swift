@@ -13,7 +13,7 @@ public final class Authentication: RoutingProvider {
         completion: @escaping (Result<LoginWebServiceResponse, Error>) -> Void
     ) {
         let parameters = LoginWebServiceParameters(mail: mail, password: password)
-        let service = LoginWebService(publicKey: publicKey, parameters: parameters)
+        let service = LoginWebService(parameters: parameters)
         
         execute(with: service) { result in
             switch result {

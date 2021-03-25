@@ -20,6 +20,6 @@ final class AuthenticationProvider {
     }
     
     func setJwtToken(with token: String) {
-        keychain.get(token, "quiches-jwt-bearer-token")
+        keychain.set(token, forKey: "quiches-jwt-bearer-token")
     }
 }

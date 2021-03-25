@@ -25,10 +25,8 @@ final class LoginWebService: Routing {
     var authenticationType: AuthenticationType = .PublicKey
     
     let parameters: LoginWebServiceParameters?
-    let publicKey: String?
     
-    init(publicKey: String, parameters: LoginWebServiceParameters) {
-        self.publicKey = publicKey
+    init(parameters: LoginWebServiceParameters) {
         self.parameters = parameters
     }
 }

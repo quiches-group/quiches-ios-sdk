@@ -47,8 +47,6 @@ protocol Routing {
     var successStatusCodes: Set<Int> { get }
     
     var authenticationType: AuthenticationType { get }
-    
-    var publicKey: String? { get }
 }
 
 extension Routing {
@@ -96,8 +94,8 @@ extension Routing {
             ? baseURL.absoluteString
             : baseURL.appendingPathComponent(path).absoluteString
         
-        if authenticationType == .PublicKey {
-            guard let key = AuthenticationProvider.shared.publicKey else { return }
+        if authenticationType == .PublicKey,
+           let key = AuthenticationProvider.shared.publicKey {
 
             urlString = urlString.appending("?publicKey=\(key)")
         }
@@ -129,7 +127,7 @@ extension Routing {
         
         if authenticationType == .JWTBearer,
            let bearerToken = AuthenticationProvider.shared.jwtToken {
-            request.addValue("Bearer ", forHTTPHeaderField: "authorization")
+            request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "authorization")
         }
         
         if let parameters = self.parameters {
