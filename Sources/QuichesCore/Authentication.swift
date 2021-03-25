@@ -40,4 +40,20 @@ public final class Authentication: RoutingProvider {
         }
     }
     
+    public func registerAppUser(
+        mail: String, password: String, firstname: String, lastname: String,
+        completion: @escaping(Result<Void, Error>) -> Void
+    ) {
+            let parameters = RegisterWebServiceParameters(mail: mail, password: password, firstname: firstname, lastname: lastname)
+            let service = RegisterWebService(parameters: parameters)
+            
+            execute(with: service) { result in
+            switch result {
+            case .success():
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
