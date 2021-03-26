@@ -30,30 +30,16 @@ public final class Authentication: RoutingProvider {
     public func getCurrentUser(completion: @escaping (Result<User, Error>) -> Void) {
         let service = GetCurrentUserWebService()
         
-        execute(with: service) { result in
-            switch result {
-            case .success(let user):
-                completion(.success(user))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        execute(with: service, completion: completion)
     }
     
     public func registerAppUser(
         mail: String, password: String, firstname: String, lastname: String,
         completion: @escaping(Result<Void, Error>) -> Void
     ) {
-            let parameters = RegisterWebServiceParameters(mail: mail, password: password, firstname: firstname, lastname: lastname)
-            let service = RegisterWebService(parameters: parameters)
-            
-            execute(with: service) { result in
-            switch result {
-            case .success():
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        let parameters = RegisterWebServiceParameters(mail: mail, password: password, firstname: firstname, lastname: lastname)
+        let service = RegisterWebService(parameters: parameters)
+        
+        execute(with: service, completion: completion)
     }
 }

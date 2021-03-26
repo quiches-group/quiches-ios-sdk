@@ -15,7 +15,7 @@ public struct User: Decodable {
     let applicationId: String
 }
 
-class GetCurrentUserWebService: Routing {
+final class GetCurrentUserWebService: Routing {
     typealias ParameterTypes = EmptyCodable
     
     typealias DecodeType = User
