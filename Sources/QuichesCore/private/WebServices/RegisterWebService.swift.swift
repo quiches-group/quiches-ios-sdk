@@ -17,10 +17,10 @@ struct RegisterWebServiceParameters: Encodable {
 final class RegisterWebService: Routing {
     typealias DecodeType = EmptyCodable
     
-    var baseURL: Config.Hostname = .sso
-    var path: String = "/application-users"
-    var authenticationType: AuthenticationType = .none
-    var method: HTTPMethod = .PUT
+    let baseURL: Config.Hostname = .sso
+    let path: String = "/application-users"
+    let authenticationType: AuthenticationType = .PublicKey
+    let method: HTTPMethod = .PUT
     
     let parameters: RegisterWebServiceParameters?
     
