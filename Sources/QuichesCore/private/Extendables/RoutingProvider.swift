@@ -12,14 +12,14 @@ protocol RoutingProvider {}
 extension RoutingProvider {
     private func send<T: Routing>(with routing: T, completion: @escaping (Result<Data?, Error>) -> Void) {
         guard let request = routing.urlRequest else {
-            completion(.failure(NSError(domain: "UNKNOW_ERROR", code: 500, userInfo: nil)))
+            completion(.failure(NSError(domain: "REQUEST_ERROR", code: 500, userInfo: nil)))
 
             return
         }
         
         URLSession.shared.dataTask(with: request) { (data, urlResponse, error) in
             guard let response = urlResponse as? HTTPURLResponse else {
-                completion(.failure(NSError(domain: "UNKNOW_ERROR", code: 500, userInfo: nil)))
+                completion(.failure(NSError(domain: "RESPONSE_ERROR", code: 500, userInfo: nil)))
 
                 return
             }
@@ -31,7 +31,7 @@ extension RoutingProvider {
                 
                 return
             } else {
-                completion(.failure(NSError(domain: "UNKNOW_ERROR", code: 500, userInfo: nil)))
+                completion(.failure(NSError(domain: "STATUS_CODE_ERROR", code: response.statusCode, userInfo: nil)))
                 
                 return
             }
@@ -65,7 +65,7 @@ extension RoutingProvider {
             case .success(let data):
                 do {
                     guard let data = data else {
-                        completion(.failure(NSError(domain: "UNKNOW_ERROR", code: 500, userInfo: nil)))
+                        completion(.failure(NSError(domain: "DDECODE_ERROR", code: 500, userInfo: nil)))
                         
                         return
                     }
