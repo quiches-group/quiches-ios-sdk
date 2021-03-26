@@ -20,9 +20,9 @@ public struct LoginWebServiceResponse: Decodable {
 final class LoginWebService: Routing {
     typealias DecodeType = LoginWebServiceResponse
     
-    var baseURL: Config.Hostname = .sso
-    var path: String = "/application-users/login"
-    var authenticationType: AuthenticationType = .PublicKey
+    let baseURL: Config.Hostname = .sso
+    let path: String = "/application-users/login"
+    let authenticationType: AuthenticationType = .PublicKey
     
     let parameters: LoginWebServiceParameters?
     

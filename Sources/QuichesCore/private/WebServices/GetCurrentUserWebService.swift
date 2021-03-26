@@ -17,7 +17,8 @@ class GetCurrentUserWebService: Routing {
     
     typealias DecodeType = User
     
-    var baseURL: Config.Hostname = .sso
-    var path: String = "/application-users/current"
-    var authenticationType: AuthenticationType = .JWTBearer
+    let baseURL: Config.Hostname = .sso
+    let path: String = "/application-users/current"
+    let authenticationType: AuthenticationType = .JWTBearer
+    let method: HTTPMethod = .GET
 }
