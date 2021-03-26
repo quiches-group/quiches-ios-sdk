@@ -8,8 +8,11 @@
 import Foundation
 
 public struct User: Decodable {
-    let token: String
-    let refreshToken: String
+    let _id: String
+    let mail: String
+    let firstname: String
+    let lastname: String
+    let applicationId: String
 }
 
 class GetCurrentUserWebService: Routing {
