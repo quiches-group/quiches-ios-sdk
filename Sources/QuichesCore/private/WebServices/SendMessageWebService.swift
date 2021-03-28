@@ -17,7 +17,7 @@ final class SendMessageWebService: Routing {
     
     var baseURL: Config.Hostname = .apiclient
     var path: String = "/api/message/"
-    var authenticationType: AuthenticationType = .PublicKey
+    var authenticationType: AuthenticationType = .JWTBearer
     var method: HTTPMethod = .PUT
     
     let parameters: SendMessageWebServiceParameters?
