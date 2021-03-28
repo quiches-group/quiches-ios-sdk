@@ -9,7 +9,7 @@ import Foundation
 
 struct SendMessageWebServiceParameters: Encodable {
     let mail: String
-    let message: String
+    let body: String
 }
 
 final class SendMessageWebService: Routing {
