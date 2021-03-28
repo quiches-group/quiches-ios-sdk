@@ -14,4 +14,14 @@ public final class Notification: RoutingProvider {
         
         execute(with: service, completion: completion)
     }
+    
+    public func sendMessage(
+        mail: String, message: String,
+        completion: @escaping(Result<Void, Error>) -> Void
+    ) {
+        let parameters = SendMessageWebServiceParameters(mail: mail, message: message)
+        let service = SendMessageWebService(parameters: parameters)
+        
+        execute(with: service, completion: completion)
+    }
 }
