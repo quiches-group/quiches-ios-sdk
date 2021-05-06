@@ -6,8 +6,25 @@
 //
 
 import Foundation
+import JWTDecode
 
-public final class Authentication: RoutingProvider {    
+public final class Authentication: RoutingProvider {
+    public var token: String? {
+        return AuthenticationProvider.shared.jwtToken
+    }
+    
+    public var tokenIsExpired: Bool {
+        guard let token = token else { return false }
+
+        do {
+            let jwt = try decode(jwt: token)
+            
+            return jwt.expired
+        } catch {
+            return false
+        }
+    }
+    
     public func signInWithMailAndPassword(
         mail: String, password: String,
         completion: @escaping (Result<User, Error>) -> Void
@@ -18,7 +35,8 @@ public final class Authentication: RoutingProvider {
         execute(with: service) { [getCurrentUser] result in
             switch result {
             case .success(let credentials):
-                AuthenticationProvider.shared.setJwtToken(with: credentials.token)
+                AuthenticationProvider.shared.jwtToken = credentials.token
+                AuthenticationProvider.shared.refreshToken = credentials.refreshToken
                 
                 getCurrentUser(completion)
             case .failure(let error):
@@ -41,5 +59,27 @@ public final class Authentication: RoutingProvider {
         let service = RegisterWebService(parameters: parameters)
         
         execute(with: service, completion: completion)
+    }
+    
+    public func refreshToken(completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let refreshToken = AuthenticationProvider.shared.refreshToken else {
+            completion(.failure(NSError(domain: "NO_REFRESH_TOKEN", code: 500, userInfo: nil)))
+            return
+        }
+        let parameters = RefreshTokenServiceParameters(refreshToken: refreshToken)
+        
+        let service = RefreshTokenWebService(parameters: parameters)
+        
+        execute(with: service) { result in
+            switch result {
+            case .success(let credentials):
+                AuthenticationProvider.shared.jwtToken = credentials.token
+                AuthenticationProvider.shared.refreshToken = credentials.refreshToken
+                
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 }

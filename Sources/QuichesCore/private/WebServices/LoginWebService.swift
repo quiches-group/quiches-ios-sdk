@@ -12,13 +12,13 @@ struct LoginWebServiceParameters: Encodable {
     let password: String
 }
 
-public struct LoginWebServiceResponse: Decodable {
+struct TokenPair: Decodable {
     let token: String
     let refreshToken: String
 }
 
 final class LoginWebService: Routing {
-    typealias DecodeType = LoginWebServiceResponse
+    typealias DecodeType = TokenPair
     
     let baseURL: Config.Hostname = .sso
     let path: String = "/application-users/login"

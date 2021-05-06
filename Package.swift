@@ -16,17 +16,21 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-         .package(
+        .package(
             name: "KeychainSwift",
             url: "https://github.com/evgenyneu/keychain-swift.git",
             .exact("19.0.0")),
+        .package(
+            name: "JWTDecode",
+            url: "https://github.com/auth0/JWTDecode.swift.git",
+            .exact("2.6.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "QuichesCore",
-            dependencies: ["KeychainSwift"]),
+            dependencies: ["KeychainSwift", "JWTDecode"]),
         .testTarget(
             name: "quiches-ios-sdkTests",
             dependencies: ["QuichesCore"]),
